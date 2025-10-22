@@ -1,0 +1,42 @@
+<!-- MENU SCREEN -->
+  <section id="menuScreen" class="screen hidden">
+    <div class="card large">
+      <div class="header">
+        <h2>Our Meals</h2>
+        <div class="nav-cats">
+          <button class="cat-btn" data-cat="All">All</button>
+          <button class="cat-btn" data-cat="Starters">Starters</button>
+          <button class="cat-btn" data-cat="Mains">Main Course</button>
+          <button class="cat-btn" data-cat="Desserts">Desserts</button>
+        </div>
+      </div>
+
+      <div id="menuList" class="menu-list"></div>
+
+      <div class="menu-actions">
+        <button id="openAddItem" class="btn btn-primary hidden">+ Add Item (Chef)</button>
+        <button class="btn btn-tertiary" id="menuToCart">View Cart</button>
+        <button class="btn btn-ghost" id="backFromMenu">⬅ Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADD ITEM (Chef modal-like form) -->
+  <div id="addItemModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Add / Edit Menu Item</h3>
+      <input id="itemName" class="input" placeholder="Dish name" />
+      <textarea id="itemDesc" class="input" placeholder="Short description"></textarea>
+      <select id="itemCourse" class="input">
+        <option>Starters</option>
+        <option>Main Course</option>
+        <option>Desserts</option>
+      </select>
+      <input id="itemPrice" class="input" type="number" placeholder="Price (numbers only)" />
+      <input id="itemImage" class="input" placeholder="Image filename in images/ (e.g. lasagna.jpg) or URL" />
+      <div class="btn-row">
+        <button id="saveItem" class="btn btn-primary">Save</button>
+        <button id="cancelAdd" class="btn btn-ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
