@@ -1,160 +1,127 @@
 import React, { useState } from "react";
+import { Props, Course, MenuItem } from "./types"; // Import the shared Props interface
 
-interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  course: string;
-  price: number;
-}
+export default function ChefScreen({ addDish, setScreen }: Props) {
+  const [dish, setDish] = useState({
+    name: "",
+    price: "",
+    image: "",
+    description: "",
+    category: "Starters" as Course,
+  });
 
-type Screen = "home" | "chef" | "menu";
+  const handleAdd = () => {
+    if (!dish.name || !dish.price || !dish.image) {
+      alert("Please fill in all required fields");
+      return;
+    }
 
-/**
- * Local ChefScreen component so props are correctly typed.
- * Props:
- *  - addMenuItem: (item: MenuItem) => void
- *  - onBack: () => void
- */
-const ChefScreen: React.FC<{
-  addMenuItem: (item: MenuItem) => void;
-  onBack: () => void;
-}> = ({ addMenuItem, onBack }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [course, setCourse] = useState("");
-  const [price, setPrice] = useState<number>(0);
-
-  const submit = () => {
-    if (!name) return;
-    const item: MenuItem = {
-      id: Date.now().toString(),
-      name,
-      description,
-      course,
-      price,
+    const newDish: MenuItem = {
+      id: Date.now(),
+      name: dish.name,
+      price: parseFloat(dish.price),
+      image: dish.image,
+      description: dish.description,
+      category: dish.category,
     };
-    addMenuItem(item);
-    setName("");
-    setDescription("");
-    setCourse("");
-    setPrice(0);
+
+    addDish(newDish);
+    alert("Dish added successfully!");
+
+    // Reset form
+    setDish({
+      name: "",
+      price: "",
+      image: "",
+      description: "",
+      category: "Starters",
+    });
+  };
+
+  const styles = {
+    container: {
+      backgroundColor: "#fff3cd",
+      height: "100vh",
+      display: "flex",
+      flexDirection: "column" as const,
+      justifyContent: "center",
+      alignItems: "center",
+      fontFamily: "Arial, sans-serif",
+    },
+    input: {
+      width: "80%",
+      padding: 10,
+      margin: 5,
+      borderRadius: 8,
+      border: "1px solid #ccc",
+    },
+    button: {
+      padding: "10px 15px",
+      borderRadius: 8,
+      border: "none",
+      color: "#fff",
+      margin: 5,
+      cursor: "pointer",
+      fontWeight: "bold",
+    },
   };
 
   return (
-    <div className="w-80 bg-yellow-50 p-6 rounded-xl">
-      <h2 className="text-xl font-bold mb-4">Chef Screen</h2>
+    <div style={styles.container}>
+      <h2>👨‍🍳 Add a New Dish</h2>
 
-      <label className="block mb-2">
-        <div className="text-sm">Name</div>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </label>
+      <input
+        placeholder="Dish name"
+        style={styles.input}
+        value={dish.name}
+        onChange={(e) => setDish({ ...dish, name: e.target.value })}
+      />
+      <input
+        placeholder="Price"
+        type="number"
+        style={styles.input}
+        value={dish.price}
+        onChange={(e) => setDish({ ...dish, price: e.target.value })}
+      />
+      <input
+        placeholder="Image URL"
+        style={styles.input}
+        value={dish.image}
+        onChange={(e) => setDish({ ...dish, image: e.target.value })}
+      />
+      <textarea
+        placeholder="Description"
+        style={styles.input}
+        value={dish.description}
+        onChange={(e) => setDish({ ...dish, description: e.target.value })}
+      />
+      <select
+        style={styles.input}
+        value={dish.category}
+        onChange={(e) => setDish({ ...dish, category: e.target.value as Course })}
+      >
+        <option>Starters</option>
+        <option>Main Course</option>
+        <option>Desserts</option>
+      </select>
 
-      <label className="block mb-2">
-        <div className="text-sm">Description</div>
-        <input
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </label>
-
-      <label className="block mb-2">
-        <div className="text-sm">Course</div>
-        <input
-          value={course}
-          onChange={(e) => setCourse(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </label>
-
-      <label className="block mb-2">
-        <div className="text-sm">Price</div>
-        <input
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(Number(e.target.value))}
-          className="w-full p-2 border rounded"
-        />
-      </label>
-
-      <div className="flex gap-2 mt-4">
+      <div>
         <button
-          className="p-2 bg-green-600 text-white rounded"
-          onClick={submit}
+          style={{ ...styles.button, backgroundColor: "#16a34a" }}
+          onClick={handleAdd}
         >
-          Add Item
+          ➕ Add Dish
         </button>
+
         <button
-          className="p-2 bg-gray-600 text-white rounded"
-          onClick={onBack}
+          style={{ ...styles.button, backgroundColor: "#dc2626" }}
+          onClick={() => setScreen("menu")}
         >
-          Back
+          🔙 Back
         </button>
       </div>
     </div>
   );
-};
-export default function App() {
-  const [screen, setScreen] = useState<Screen>("home");
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-
-  const addMenuItem = (item: MenuItem) => {
-    setMenuItems((prev) => [...prev, item]);
-    setScreen("menu");
-  };
-
-  return (
-    <div className="p-6">
-      {screen === "home" && (
-        <div className="w-80 bg-yellow-50 p-6 rounded-xl">
-          <h1 className="text-xl font-bold mb-4">Admin Home</h1>
-          <button
-            className="w-full mb-2 p-2 bg-green-600 text-white rounded"
-            onClick={() => setScreen("chef")}
-          >
-            Open Chef Screen
-          </button>
-          <button
-            className="w-full p-2 bg-gray-600 text-white rounded"
-            onClick={() => setScreen("menu")}
-          >
-            View Menu
-          </button>
-        </div>
-      )}
-
-      {screen === "chef" && (
-        <ChefScreen
-          addMenuItem={addMenuItem}
-          onBack={() => setScreen("home")}
-        />
-      )}
-
-      {screen === "menu" && (
-        <div className="w-96 bg-white p-6 rounded-xl border">
-          <h2 className="text-xl font-bold mb-4">Menu</h2>
-          <button
-            className="mb-4 p-2 bg-gray-600 text-white rounded"
-            onClick={() => setScreen("home")}
-          >
-            Back to Home
-          </button>
-          <ul>
-            {menuItems.length === 0 && <li>No items yet</li>}
-            {menuItems.map((m) => (
-              <li key={m.id} className="mb-2">
-                <div className="font-semibold">{m.name} — ${m.price}</div>
-                <div className="text-sm text-gray-600">{m.description}</div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
 }
+
+
