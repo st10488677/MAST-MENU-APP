@@ -1,85 +1,88 @@
 import React from "react";
-import { Props } from "./types"; // Import the shared Props interface
+import { MenuItem } from "./types";
 
-export default function HomeScreen({ setScreen, role, username }: Props) {
+interface Props {
+  menu: MenuItem[];
+  setScreen: (screen: string) => void;
+}
+
+export default function HomeScreen({ menu, setScreen }: Props) {
+  // Calculate averages safely
+  const getAverage = (category: string) => {
+    const items = menu.filter((m) => m.category === category);
+    if (items.length === 0) return 0;
+    return (
+      items.reduce((sum, m) => sum + m.price, 0) / items.length
+    ).toFixed(2);
+  };
+
   const styles = {
     container: {
       backgroundColor: "#e0f2fe",
       minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column" as const,
-      alignItems: "center",
-      justifyContent: "center",
+      padding: 20,
       textAlign: "center" as const,
       fontFamily: "Arial, sans-serif",
     },
-    card: {
-      backgroundColor: "#bfdbfe",
-      borderRadius: 20,
-      padding: 20,
-      boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-      width: 300,
-    },
-    welcome: {
-      fontWeight: "bold",
-      marginBottom: 20,
-    },
     button: {
-      width: "100%",
-      padding: "12px",
-      borderRadius: 10,
       border: "none",
-      fontSize: "16px",
-      marginBottom: 10,
+      borderRadius: 8,
+      padding: 10,
+      color: "#fff",
+      margin: 5,
       cursor: "pointer",
       fontWeight: "bold",
     },
-    viewMenu: {
-      backgroundColor: "#3b82f6",
-      color: "#fff",
-    },
-    viewCart: {
-      backgroundColor: "#16a34a",
-      color: "#fff",
-    },
-    back: {
-      backgroundColor: "#dc2626",
-      color: "#fff",
+    listItem: {
+      backgroundColor: "#f9fafb",
+      margin: "10px auto",
+      padding: "10px",
+      borderRadius: "8px",
+      width: "80%",
+      boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
     },
   };
 
   return (
     <div style={styles.container}>
-      <div style={styles.card}>
-        <h3 style={styles.welcome}>WELCOME {username || role.toUpperCase()}!</h3>
+      <h1>🍽️ Welcome to Our Menu App</h1>
+
+      <h3>Average Prices by Course</h3>
+      <p>Starters: R{getAverage("Starters")}</p>
+      <p>Main Course: R{getAverage("Main Course")}</p>
+      <p>Desserts: R{getAverage("Desserts")}</p>
+
+      <h2>Full Menu</h2>
+      {menu.length === 0 ? (
+        <p>No menu items available. Please add some from the Chef Screen.</p>
+      ) : (
+        menu.map((item) => (
+          <div key={item.id} style={styles.listItem}>
+            <h4>{item.name}</h4>
+            <p>Course: {item.category}</p>
+            <p>Price: R{item.price}</p>
+          </div>
+        ))
+      )}
+
+      <div>
         <button
-          style={{ ...styles.button, ...styles.viewMenu }}
+          style={{ ...styles.button, backgroundColor: "#3b82f6" }}
           onClick={() => setScreen("menu")}
         >
-          🍽 View menu
+          🍴 View Menu (Filter)
         </button>
-
         <button
-          style={{ ...styles.button, ...styles.viewCart }}
+          style={{ ...styles.button, backgroundColor: "#10b981" }}
           onClick={() => setScreen("cart")}
         >
-          🛒 View cart
+          🛒 View Cart
         </button>
-
-        {role === "chef" && (
-          <button
-            style={{ ...styles.button, backgroundColor: "#fbbf24", color: "#000" }}
-            onClick={() => setScreen("chef")}
-          >
-            👨‍🍳 Chef tools
-          </button>
-        )}
-
         <button
-          style={{ ...styles.button, ...styles.back }}
-          onClick={() => setScreen("login")}
+          style={{ ...styles.button, backgroundColor: "#f59e0b" }}
+          onClick={() => setScreen("chef")}
         >
-          🔙 back
+          👨‍🍳 Chef Tools
         </button>
       </div>
     </div>
