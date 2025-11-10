@@ -1,58 +1,36 @@
 import React from "react";
-import { Props } from "./types"; // Import the shared Props interface
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { Props } from "./types";
 
 export default function CartScreen({ cart, resetCart, setScreen }: Props) {
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
-
-  const styles = {
-    container: {
-      backgroundColor: "#bfdbfe",
-      minHeight: "100vh",
-      padding: 20,
-      textAlign: "center" as const,
-      fontFamily: "Arial, sans-serif",
-    },
-    button: {
-      border: "none",
-      borderRadius: 8,
-      padding: 10,
-      color: "#fff",
-      margin: 5,
-      cursor: "pointer",
-      fontWeight: "bold",
-    },
-  };
+  const total = cart.reduce((sum, i) => sum + i.price, 0);
 
   return (
-    <div style={styles.container}>
-      <h2>Your Cart</h2>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>Your Cart</Text>
       {cart.length === 0 ? (
-        <p>Your orders will appear here...</p>
+        <Text>Your orders will appear here...</Text>
       ) : (
-        cart.map((i) => <p key={i.id}>{i.name} — R{i.price}</p>)
+        cart.map((i) => <Text key={i.id}>{i.name} — R{i.price}</Text>)
       )}
-      <h3>Total: R{total}</h3>
+      <Text style={{ fontWeight: "bold", marginTop: 10 }}>Total: R{total}</Text>
 
-      <button
-        style={{ ...styles.button, backgroundColor: "#dc2626" }}
-        onClick={() => resetCart()}
-      >
-        🔁 Reset Cart
-      </button>
-
-      <button
-        style={{ ...styles.button, backgroundColor: "#16a34a" }}
-        onClick={() => alert("Checkout complete ✅")}
-      >
-        💳 Checkout
-      </button>
-
-      <button
-        style={{ ...styles.button, backgroundColor: "gray" }}
-        onClick={() => setScreen("home")}
-      >
-        🔙 Back
-      </button>
-    </div>
+      <TouchableOpacity style={[styles.button, { backgroundColor: "#dc2626" }]} onPress={resetCart}>
+        <Text style={styles.buttonText}>🔁 Reset Cart</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { backgroundColor: "#16a34a" }]} onPress={() => alert("Checkout complete ✅")}>
+        <Text style={styles.buttonText}>💳 Checkout</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { backgroundColor: "gray" }]} onPress={() => setScreen("home")}>
+        <Text style={styles.buttonText}>🔙 Back</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, backgroundColor: "#bfdbfe" },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 10, textAlign: "center" },
+  button: { padding: 10, borderRadius: 8, marginTop: 10, alignItems: "center" },
+  buttonText: { color: "#fff", fontWeight: "bold" },
+});

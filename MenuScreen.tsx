@@ -1,95 +1,35 @@
-import React, { useState } from "react";
-import { Props, Course, MenuItem } from "./types"; // Use central Props
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { Props, MenuItem } from "./types";
 
-export default function MenuScreen({
-  role,
-  menu,
-  addToCart,
-  removeDish,
-  setScreen,
-}: Props) {
-  const [category, setCategory] = useState<Course>("Starters");
-
-  const filtered = menu.filter((m) => m.category === category);
-
-  const styles = {
-    container: {
-      backgroundColor: "#fde047",
-      minHeight: "100vh",
-      padding: 20,
-      fontFamily: "Arial, sans-serif",
-      textAlign: "center" as const,
-    },
-    button: {
-      padding: "10px 15px",
-      border: "none",
-      borderRadius: 10,
-      margin: "5px",
-      color: "#fff",
-      fontWeight: "bold",
-      cursor: "pointer",
-    },
-    menuItem: {
-      backgroundColor: "#fff",
-      borderRadius: 10,
-      boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-      width: 320,
-      margin: "15px auto",
-      padding: 10,
-    },
-    img: { width: "100%", borderRadius: 10 },
-  };
-
+export default function MenuScreen({ menu, addToCart, setScreen }: Props) {
   return (
-    <div style={styles.container}>
-      <h2>🍴 Our Meals</h2>
-      <div>
-        {["Starters", "Main Course", "Desserts"].map((cat) => (
-          <button
-            key={cat}
-            style={{
-              ...styles.button,
-              backgroundColor: category === cat ? "#2563eb" : "#93c5fd",
-            }}
-            onClick={() => setCategory(cat as Course)}
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>🍴 Menu</Text>
+      {menu.map((item: MenuItem) => (
+        <View key={item.id} style={styles.item}>
+          <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+          <Text>Course: {item.category}</Text>
+          <Text>Price: R{item.price}</Text>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#16a34a" }]}
+            onPress={() => addToCart(item)}
           >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {filtered.map((item) => (
-        <div key={item.id} style={styles.menuItem}>
-          <img src={item.image} alt={item.name} style={styles.img} />
-          <h3>{item.name}</h3>
-          <p>{item.description}</p>
-          <p>💸 Price: R{item.price}</p>
-
-          {role === "customer" ? (
-            <button
-              style={{ ...styles.button, backgroundColor: "#1d4ed8" }}
-              onClick={() => addToCart(item)}
-            >
-              ➕ Add to Cart
-            </button>
-          ) : (
-            <button
-              style={{ ...styles.button, backgroundColor: "#dc2626" }}
-              onClick={() => removeDish(item.id)}
-            >
-              ❌ Remove Item
-            </button>
-          )}
-        </div>
+            <Text style={styles.buttonText}>Add to Cart</Text>
+          </TouchableOpacity>
+        </View>
       ))}
-
-      <button
-        style={{ ...styles.button, backgroundColor: "#dc2626" }}
-        onClick={() => setScreen("home")}
-      >
-        🔙 Back
-      </button>
-    </div>
+      <TouchableOpacity style={[styles.button, { backgroundColor: "gray" }]} onPress={() => setScreen("home")}>
+        <Text style={styles.buttonText}>🔙 Back</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, backgroundColor: "#e0f2fe" },
+  title: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 10 },
+  item: { backgroundColor: "#fff", padding: 10, borderRadius: 8, marginVertical: 5 },
+  button: { padding: 10, borderRadius: 8, marginTop: 5, alignItems: "center" },
+  buttonText: { color: "#fff", fontWeight: "bold" },
+});

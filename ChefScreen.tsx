@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { Props, Course, MenuItem } from "./types"; // Import the shared Props interface
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { Picker } from "@react-native-picker/picker"; // ✅ Correct import
+import { Props, Course, MenuItem } from "./types";
 
 export default function ChefScreen({ addDish, setScreen }: Props) {
   const [dish, setDish] = useState({
@@ -12,7 +14,7 @@ export default function ChefScreen({ addDish, setScreen }: Props) {
 
   const handleAdd = () => {
     if (!dish.name || !dish.price || !dish.image) {
-      alert("Please fill in all required fields");
+      alert("Please fill all required fields!");
       return;
     }
 
@@ -28,100 +30,46 @@ export default function ChefScreen({ addDish, setScreen }: Props) {
     addDish(newDish);
     alert("Dish added successfully!");
 
-    // Reset form
-    setDish({
-      name: "",
-      price: "",
-      image: "",
-      description: "",
-      category: "Starters",
-    });
-  };
-
-  const styles = {
-    container: {
-      backgroundColor: "#fff3cd",
-      height: "100vh",
-      display: "flex",
-      flexDirection: "column" as const,
-      justifyContent: "center",
-      alignItems: "center",
-      fontFamily: "Arial, sans-serif",
-    },
-    input: {
-      width: "80%",
-      padding: 10,
-      margin: 5,
-      borderRadius: 8,
-      border: "1px solid #ccc",
-    },
-    button: {
-      padding: "10px 15px",
-      borderRadius: 8,
-      border: "none",
-      color: "#fff",
-      margin: 5,
-      cursor: "pointer",
-      fontWeight: "bold",
-    },
+    setDish({ name: "", price: "", image: "", description: "", category: "Starters" });
   };
 
   return (
-    <div style={styles.container}>
-      <h2>👨‍🍳 Add a New Dish</h2>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>👨‍🍳 Add a New Dish</Text>
+      <TextInput style={styles.input} placeholder="Dish Name" value={dish.name} onChangeText={(v) => setDish({ ...dish, name: v })} />
+      <TextInput style={styles.input} placeholder="Price" keyboardType="numeric" value={dish.price} onChangeText={(v) => setDish({ ...dish, price: v })} />
+      <TextInput style={styles.input} placeholder="Image URL" value={dish.image} onChangeText={(v) => setDish({ ...dish, image: v })} />
+      <TextInput style={styles.input} placeholder="Description" value={dish.description} onChangeText={(v) => setDish({ ...dish, description: v })} />
 
-      <input
-        placeholder="Dish name"
-        style={styles.input}
-        value={dish.name}
-        onChange={(e) => setDish({ ...dish, name: e.target.value })}
-      />
-      <input
-        placeholder="Price"
-        type="number"
-        style={styles.input}
-        value={dish.price}
-        onChange={(e) => setDish({ ...dish, price: e.target.value })}
-      />
-      <input
-        placeholder="Image URL"
-        style={styles.input}
-        value={dish.image}
-        onChange={(e) => setDish({ ...dish, image: e.target.value })}
-      />
-      <textarea
-        placeholder="Description"
-        style={styles.input}
-        value={dish.description}
-        onChange={(e) => setDish({ ...dish, description: e.target.value })}
-      />
-      <select
-        style={styles.input}
-        value={dish.category}
-        onChange={(e) => setDish({ ...dish, category: e.target.value as Course })}
-      >
-        <option>Starters</option>
-        <option>Main Course</option>
-        <option>Desserts</option>
-      </select>
-
-      <div>
-        <button
-          style={{ ...styles.button, backgroundColor: "#16a34a" }}
-          onClick={handleAdd}
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={dish.category}
+          onValueChange={(v: Course) => setDish({ ...dish, category: v })} // ✅ typed
         >
-          ➕ Add Dish
-        </button>
+          <Picker.Item label="Starters" value="Starters" />
+          <Picker.Item label="Main Course" value="Main Course" />
+          <Picker.Item label="Desserts" value="Desserts" />
+        </Picker>
+      </View>
 
-        <button
-          style={{ ...styles.button, backgroundColor: "#dc2626" }}
-          onClick={() => setScreen("menu")}
-        >
-          🔙 Back
-        </button>
-      </div>
-    </div>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: "#16a34a" }]} onPress={handleAdd}>
+          <Text style={styles.buttonText}>➕ Add Dish</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { backgroundColor: "#dc2626" }]} onPress={() => setScreen("home")}>
+          <Text style={styles.buttonText}>🔙 Back</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
-
+const styles = StyleSheet.create({
+  container: { padding: 20, alignItems: "center" },
+  title: { fontSize: 22, fontWeight: "bold", marginBottom: 15 },
+  input: { width: "90%", padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 8, marginVertical: 5 },
+  pickerContainer: { width: "90%", marginVertical: 5, borderWidth: 1, borderColor: "#ccc", borderRadius: 8 },
+  buttonRow: { flexDirection: "row", marginTop: 15 },
+  button: { padding: 10, borderRadius: 8, marginHorizontal: 5 },
+  buttonText: { color: "#fff", fontWeight: "bold", textAlign: "center" },
+});

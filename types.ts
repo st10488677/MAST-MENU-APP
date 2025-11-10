@@ -1,25 +1,25 @@
 import React from "react";
 
-// Screen union type
+// All possible screens
 export type Screen = "login" | "home" | "menu" | "cart" | "chef";
 
-// Role union type
+// User roles
 export type Role = "" | "customer" | "chef";
 
-// Menu categories
+// Course categories
 export type Course = "Starters" | "Main Course" | "Desserts";
 
-// Menu item type
-export type MenuItem = {
+// Menu item structure
+export interface MenuItem {
   id: number;
   name: string;
   price: number;
   image: string;
   description: string;
   category: Course;
-};
+}
 
-// Props interface shared across screens
+// Shared props across screens
 export interface Props {
   username: string;
   role: Role;
@@ -36,8 +36,3 @@ export interface Props {
   password: string;
   setRole: React.Dispatch<React.SetStateAction<Role>>;
 }
-
-
-
-
-

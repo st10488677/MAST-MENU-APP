@@ -1,90 +1,69 @@
 import React from "react";
-import { MenuItem } from "./types";
-
-interface Props {
-  menu: MenuItem[];
-  setScreen: (screen: string) => void;
-}
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { Props, MenuItem } from "./types";
 
 export default function HomeScreen({ menu, setScreen }: Props) {
-  // Calculate averages safely
   const getAverage = (category: string) => {
     const items = menu.filter((m) => m.category === category);
     if (items.length === 0) return 0;
-    return (
-      items.reduce((sum, m) => sum + m.price, 0) / items.length
-    ).toFixed(2);
-  };
-
-  const styles = {
-    container: {
-      backgroundColor: "#e0f2fe",
-      minHeight: "100vh",
-      padding: 20,
-      textAlign: "center" as const,
-      fontFamily: "Arial, sans-serif",
-    },
-    button: {
-      border: "none",
-      borderRadius: 8,
-      padding: 10,
-      color: "#fff",
-      margin: 5,
-      cursor: "pointer",
-      fontWeight: "bold",
-    },
-    listItem: {
-      backgroundColor: "#f9fafb",
-      margin: "10px auto",
-      padding: "10px",
-      borderRadius: "8px",
-      width: "80%",
-      boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    },
+    return (items.reduce((sum, m) => sum + m.price, 0) / items.length).toFixed(2);
   };
 
   return (
-    <div style={styles.container}>
-      <h1>🍽️ Welcome to Our Menu App</h1>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>🍽️ Welcome to Our Menu App</Text>
+      <Text style={styles.subtitle}>Average Prices by Course</Text>
+      <Text>Starters: R{getAverage("Starters")}</Text>
+      <Text>Main Course: R{getAverage("Main Course")}</Text>
+      <Text>Desserts: R{getAverage("Desserts")}</Text>
 
-      <h3>Average Prices by Course</h3>
-      <p>Starters: R{getAverage("Starters")}</p>
-      <p>Main Course: R{getAverage("Main Course")}</p>
-      <p>Desserts: R{getAverage("Desserts")}</p>
-
-      <h2>Full Menu</h2>
+      <Text style={[styles.subtitle, { marginTop: 20 }]}>Full Menu</Text>
       {menu.length === 0 ? (
-        <p>No menu items available. Please add some from the Chef Screen.</p>
+        <Text>No menu items available. Please add some from the Chef Screen.</Text>
       ) : (
-        menu.map((item) => (
-          <div key={item.id} style={styles.listItem}>
-            <h4>{item.name}</h4>
-            <p>Course: {item.category}</p>
-            <p>Price: R{item.price}</p>
-          </div>
+        menu.map((item: MenuItem) => (
+          <View key={item.id} style={styles.listItem}>
+            <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+            <Text>Course: {item.category}</Text>
+            <Text>Price: R{item.price}</Text>
+          </View>
         ))
       )}
 
-      <div>
-        <button
-          style={{ ...styles.button, backgroundColor: "#3b82f6" }}
-          onClick={() => setScreen("menu")}
+      <View style={{ marginTop: 20 }}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#3b82f6" }]}
+          onPress={() => setScreen("menu")}
         >
-          🍴 View Menu (Filter)
-        </button>
-        <button
-          style={{ ...styles.button, backgroundColor: "#10b981" }}
-          onClick={() => setScreen("cart")}
+          <Text style={styles.buttonText}>🍴 View Menu (Filter)</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#10b981" }]}
+          onPress={() => setScreen("cart")}
         >
-          🛒 View Cart
-        </button>
-        <button
-          style={{ ...styles.button, backgroundColor: "#f59e0b" }}
-          onClick={() => setScreen("chef")}
+          <Text style={styles.buttonText}>🛒 View Cart</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#f59e0b" }]}
+          onPress={() => setScreen("chef")}
         >
-          👨‍🍳 Chef Tools
-        </button>
-      </div>
-    </div>
+          <Text style={styles.buttonText}>👨‍🍳 Chef Tools</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, backgroundColor: "#208dd6ff" },
+  title: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 10, color: "#fff" },
+  subtitle: { fontSize: 18, fontWeight: "bold", marginTop: 10, color: "#fff" },
+  listItem: {
+    backgroundColor: "#c3c74eff",
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 5,
+  },
+  button: { padding: 10, borderRadius: 8, marginVertical: 5, alignItems: "center" },
+  buttonText: { color: "#fff", fontWeight: "bold" },
+});
