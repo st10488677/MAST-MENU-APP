@@ -1,9 +1,9 @@
+// src/screens/LoginScreen.tsx
 import React, { useState } from "react";
-import { View, TextInput, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-import { Role } from "./types";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 
 interface LoginProps {
-  login: (role: Role) => void;
+  login: (role: "customer" | "chef") => void;
 }
 
 export default function LoginScreen({ login }: LoginProps) {
@@ -12,32 +12,15 @@ export default function LoginScreen({ login }: LoginProps) {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: "https://picsum.photos/120" }} style={styles.logo} />
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={styles.input}
-      />
-      <View style={{ flexDirection: "row", marginTop: 10 }}>
-        <TouchableOpacity
-          style={[styles.button, styles.customerBtn]}
-          onPress={() => login("customer")}
-        >
-          <Text style={styles.buttonText}>Customer</Text>
+      <Image source={require("../assets/menu-logo.png")} style={styles.logo} />
+      <TextInput placeholder="Enter username" value={username} onChangeText={setUsername} style={styles.input} />
+      <TextInput placeholder="Enter password" value={password} onChangeText={setPassword} style={styles.input} secureTextEntry />
+      <View style={{ flexDirection: "row", marginTop: 12 }}>
+        <TouchableOpacity style={[styles.button, styles.customerBtn]} onPress={() => login("customer")}>
+          <Text style={styles.btnText}>Customer</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.chefBtn]}
-          onPress={() => login("chef")}
-        >
-          <Text style={styles.buttonText}>Chef</Text>
+        <TouchableOpacity style={[styles.button, styles.chefBtn]} onPress={() => login("chef")}>
+          <Text style={styles.btnText}>Chef</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -45,34 +28,11 @@ export default function LoginScreen({ login }: LoginProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#0f172a",
-    padding: 20,
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 30,
-  },
-  input: {
-    width: "80%",
-    backgroundColor: "#fff",
-    padding: 10,
-    borderRadius: 8,
-    marginVertical: 5,
-  },
-  button: {
-    padding: 10,
-    borderRadius: 8,
-    marginHorizontal: 5,
-    flex: 1,
-    alignItems: "center",
-  },
+  container: { flex: 1, backgroundColor: "#0f172a", justifyContent: "center", alignItems: "center", padding: 20 },
+  logo: { width: 120, height: 120, marginBottom: 20, resizeMode: "contain" },
+  input: { width: 260, backgroundColor: "#fff", padding: 10, borderRadius: 8, marginVertical: 6 },
+  button: { padding: 12, borderRadius: 8, marginHorizontal: 8 },
   customerBtn: { backgroundColor: "#15803d" },
   chefBtn: { backgroundColor: "#1d4ed8" },
-  buttonText: { color: "#fff", fontWeight: "bold" },
+  btnText: { color: "#fff", fontWeight: "bold" },
 });
-

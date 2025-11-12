@@ -1,50 +1,67 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { Picker } from "@react-native-picker/picker"; // ✅ Correct import
-import { Props, Course, MenuItem } from "./types";
+import { View, Text, TextInput, Button, StyleSheet, ScrollView } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { MenuItem, Course } from "./types";
 
-export default function ChefScreen({ addDish, setScreen }: Props) {
+interface Props {
+  menu: MenuItem[];
+  addDish: (item: MenuItem) => void;
+  removeDish: (id: number) => void;
+  setScreen: (s: "home" | "chef" | "filter") => void;
+}
+
+export default function ChefScreen({ menu, addDish, removeDish, setScreen }: Props) {
   const [dish, setDish] = useState({
     name: "",
-    price: "",
-    image: "",
     description: "",
+    price: "",
     category: "Starters" as Course,
   });
 
-  const handleAdd = () => {
-    if (!dish.name || !dish.price || !dish.image) {
-      alert("Please fill all required fields!");
-      return;
-    }
-
-    const newDish: MenuItem = {
+  const submitDish = () => {
+    if (!dish.name || !dish.price) return;
+    addDish({
       id: Date.now(),
       name: dish.name,
-      price: parseFloat(dish.price),
-      image: dish.image,
       description: dish.description,
+      price: parseFloat(dish.price),
       category: dish.category,
-    };
-
-    addDish(newDish);
-    alert("Dish added successfully!");
-
-    setDish({ name: "", price: "", image: "", description: "", category: "Starters" });
+      image: require("../Public/images/mushrooms.jpg"), // default image
+    });
+    setDish({ name: "", description: "", price: "", category: "Starters" });
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>👨‍🍳 Add a New Dish</Text>
-      <TextInput style={styles.input} placeholder="Dish Name" value={dish.name} onChangeText={(v) => setDish({ ...dish, name: v })} />
-      <TextInput style={styles.input} placeholder="Price" keyboardType="numeric" value={dish.price} onChangeText={(v) => setDish({ ...dish, price: v })} />
-      <TextInput style={styles.input} placeholder="Image URL" value={dish.image} onChangeText={(v) => setDish({ ...dish, image: v })} />
-      <TextInput style={styles.input} placeholder="Description" value={dish.description} onChangeText={(v) => setDish({ ...dish, description: v })} />
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>👨‍🍳 Chef Panel</Text>
 
-      <View style={styles.pickerContainer}>
+      <TextInput
+        style={styles.input}
+        placeholder="Dish name"
+        value={dish.name}
+        onChangeText={(v) => setDish({ ...dish, name: v })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Description"
+        value={dish.description}
+        onChangeText={(v) => setDish({ ...dish, description: v })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Price"
+        keyboardType="numeric"
+        value={dish.price}
+        onChangeText={(v) => setDish({ ...dish, price: v })}
+      />
+
+      <Text style={styles.label}>Select Course</Text>
+      <View style={styles.pickerWrapper}>
         <Picker
           selectedValue={dish.category}
-          onValueChange={(v: Course) => setDish({ ...dish, category: v })} // ✅ typed
+          onValueChange={(v) => setDish({ ...dish, category: v as Course })}
+          style={styles.picker}
+          dropdownIconColor="#fff"
         >
           <Picker.Item label="Starters" value="Starters" />
           <Picker.Item label="Main Course" value="Main Course" />
@@ -52,24 +69,56 @@ export default function ChefScreen({ addDish, setScreen }: Props) {
         </Picker>
       </View>
 
-      <View style={styles.buttonRow}>
-        <TouchableOpacity style={[styles.button, { backgroundColor: "#16a34a" }]} onPress={handleAdd}>
-          <Text style={styles.buttonText}>➕ Add Dish</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { backgroundColor: "#dc2626" }]} onPress={() => setScreen("home")}>
-          <Text style={styles.buttonText}>🔙 Back</Text>
-        </TouchableOpacity>
+      <Button title="Add Dish" onPress={submitDish} color="#16a34a" />
+
+      <Text style={styles.subtitle}>🗑️ Remove from Menu</Text>
+      {menu.map((item) => (
+        <View key={item.id} style={styles.removeRow}>
+          <Text style={styles.dishText}>{item.name}</Text>
+          <Button title="Remove" onPress={() => removeDish(item.id)} color="#dc2626" />
+        </View>
+      ))}
+
+      <View style={{ marginTop: 20 }}>
+        <Button title="⬅ Back to Menu" onPress={() => setScreen("home")} color="#3b82f6" />
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, alignItems: "center" },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 15 },
-  input: { width: "90%", padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 8, marginVertical: 5 },
-  pickerContainer: { width: "90%", marginVertical: 5, borderWidth: 1, borderColor: "#ccc", borderRadius: 8 },
-  buttonRow: { flexDirection: "row", marginTop: 15 },
-  button: { padding: 10, borderRadius: 8, marginHorizontal: 5 },
-  buttonText: { color: "#fff", fontWeight: "bold", textAlign: "center" },
+  container: { backgroundColor: "#0f172a", padding: 15, flex: 1 },
+  title: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  input: {
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 5,
+  },
+  label: { color: "#fff", marginVertical: 8 },
+  pickerWrapper: {
+    backgroundColor: "#1e293b",
+    borderRadius: 8,
+    marginBottom: 15,
+  },
+  picker: {
+    color: "#fff",
+  },
+  subtitle: { color: "#38bdf8", fontSize: 18, marginVertical: 10 },
+  removeRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#1e293b",
+    borderRadius: 8,
+    padding: 8,
+    marginVertical: 4,
+  },
+  dishText: { color: "#fff" },
 });
