@@ -9,6 +9,7 @@ Project: MAST Menu App — Portfolio of Evidence (PoE)
  Overview
 The MAST Menu App is a React Native Android application built for chefs and guests to manage and view menu items.  
 It was developed as part of a Portfolio of Evidence (PoE) to demonstrate planning, user interface creation, and feature implementation in React Native using Expo.
+. (THE APP RAN AND WHEN I REFRESHED IT DOESN’T RUN ANYMORE, JUST SHOWS A BLANK SCREEN NOW)
 
 Features
 Chef Features
